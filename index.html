@@ -8,11 +8,29 @@
         <link href='http://fonts.googleapis.com/css?family=Comfortaa:400,700,300' rel='stylesheet' type='text/css'>
     </head>
     <body>
-        <div id="intro">
-            <h1>yeyamix</h1>
-            <p>Welcome to <em>yeyamix</em>!</p>
-            <button id="start">Start</button>
-        </div>
+        <aside id="controls">
+            <section>
+                <label>
+                    <button id="save"></button>Save
+                </label>
+                <label>
+                    <button id="load"></button>Load
+                </label>
+                <label>
+                    <button id="reset"></button>Reset
+                </label>
+            </section>
+            <section>
+                <label>
+                    <input type="checkbox" id="recording-toggle">Record
+                </label>
+            </section>
+            <section>
+                <label>
+                    <input type="checkbox" id="metronome-toggle" checked>Metronome
+                </label>
+            </section>
+        </aside>
         
         <div id="beat-count"></div>
         

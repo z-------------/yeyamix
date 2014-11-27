@@ -2,9 +2,12 @@ var roundToNearest = function(x, n) {
     return Math.round(x / n) * n;
 };
 
-var startButton = document.querySelector("#start");
-var introElem = document.querySelector("#intro");
 var beatCountElem = document.querySelector("#beat-count");
+
+var recordingToggle = document.querySelector("#recording-toggle"),
+    metronomeToggle = document.querySelector("#metronome-toggle"),
+    saveButton = document.querySelector("#save"),
+    resetButton = document.querySelector("#reset");
 
 var notes = [];
 
@@ -22,11 +25,11 @@ for (var soundStr of ["click", "kick", "snare", "hihat", "tom1", "tom2", "cymbal
 
 var main = function(){
     var metronomeSub = function(){
-        playSound("click", 0.1);
+        if (metronomeOn) playSound("click", 0.1);
     };
 
     var metronomeBeat = function(){
-        playSound("click", 0.2);
+        if (metronomeOn) playSound("click", 0.2);
         document.body.style.backgroundColor = "rgb(" + new Array(Math.round(Math.random()*255), Math.round(Math.random()*255), Math.round(Math.random()*255)).join(",") + ")";
         
         if (beat !== beats) beat += 1;
@@ -41,44 +44,63 @@ var main = function(){
     var loopStartTime;
     var beat = 0;
     
-    startButton.onclick = function(){
-        introElem.classList.add("hidden");
-        
-        window.onkeydown = function(e){
-            var sound;
-            if (e.which === 83) sound = "snare"; // s
-            if (e.which === 88) sound = "kick"; // x
-            if (e.which === 87) sound = "tom1"; // w
-            if (e.which === 68) sound = "tom2"; // d
-            if (e.which === 65) sound = "hihat"; // a
-            if (e.which === 69) sound = "cymbal"; // e
+    var recordingOn = false,
+        metronomeOn = true;
+    
+    window.onkeydown = function(e){
+        var sound;
+        if (e.which === 83) sound = "snare"; // s
+        if (e.which === 88) sound = "kick"; // x
+        if (e.which === 87) sound = "tom1"; // w
+        if (e.which === 68) sound = "tom2"; // d
+        if (e.which === 65) sound = "hihat"; // a
+        if (e.which === 69) sound = "cymbal"; // e
 
-            if (e.which === 83 || e.which === 88 || e.which === 87 || e.which === 68 || e.which === 65 || e.which === 69) {
-                var nowTime = new Date().getTime();
-
+        if (e.which === 83 || e.which === 88 || e.which === 87 || e.which === 68 || e.which === 65 || e.which === 69) {
+            var nowTime = new Date().getTime();
+            
+            if (recordingOn) {
                 notes.push({
                     time: nowTime - loopStartTime,
                     sound: sound
                 });
-
-                playSound(sound);
             }
-        };
-        
-        setInterval(function(){
-            if (metronomeInterval) clearInterval(metronomeInterval);
-            if (colorInterval) clearInterval(colorInterval);
-            
-            metronomeSub(); metronomeBeat();
-            metronomeInterval = setInterval(metronomeSub, loopLength / Math.pow(beats, 2));
-            colorInterval = setInterval(metronomeBeat, loopLength / beats);
-            
-            playRecordings();
-            
-            loopStartTime = new Date().getTime();
 
-        }, loopLength);
+            playSound(sound);
+        }
     };
+
+    var loop = function(){
+        if (metronomeInterval) clearInterval(metronomeInterval);
+        if (colorInterval) clearInterval(colorInterval);
+
+        metronomeSub(); metronomeBeat();
+        metronomeInterval = setInterval(metronomeSub, loopLength / Math.pow(beats, 2));
+        colorInterval = setInterval(metronomeBeat, loopLength / beats);
+
+        playRecordings();
+
+        loopStartTime = new Date().getTime();
+    };
+    
+    var startLoop = function(){
+        loop();
+        return setInterval(loop, loopLength);
+    }
+    
+    startLoop();
+    
+    recordingToggle.addEventListener("change", function(){
+        recordingOn = this.checked;
+    });
+    
+    metronomeToggle.addEventListener("change", function(){
+        metronomeOn = this.checked;
+    });
+    
+    resetButton.addEventListener("click", function(){
+        notes.length = 0;
+    });
 };
 
 var playSound = function(sound, volume){

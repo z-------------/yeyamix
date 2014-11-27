@@ -5,7 +5,7 @@
     margin: 0;
     padding: 0;
     
-    transition-duration: .3s;
+    transition-duration: .2s;
     transition-property: none;
 }
 
@@ -19,16 +19,13 @@ body {
     box-sizing: border-box;
     font-family: "Comfortaa", sans-serif;
     font-size: 20px;
-    background-color: #555;
 }
 
 #beat-count {
-    opacity: 0;
-    
     position: absolute;
     left: 0;
     top: 0;
-    margin: 20px;
+    margin: 31px;
     
     background-color: white;
     color: #555;
@@ -39,29 +36,6 @@ body {
     
     width: 50px;
     height: 50px;
-    
-    transition-property: opacity;
-    transition-duration: 1s;
-}
-
-#intro {
-    position: absolute;
-    left: 0; top: 0;
-    margin: 50px;
-    padding: 31px;
-    color: rgba(255, 255, 255, .9);
-    
-    transition-property: opacity;
-    transition-duration: 1s;
-}
-
-#intro.hidden {
-    opacity: 0;
-    pointer-events: none;
-}
-
-#intro.hidden ~ #beat-count {
-    opacity: 1;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -69,9 +43,85 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 input, button {
-    background: transparent;
+    display: inline-block;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    outline: none;
+    background-color: transparent;
+    border: none;
+    
+    transition-property: background, box-shadow;
+}
+
+input[type=checkbox], button {
+    cursor: pointer;
+}
+
+aside {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 300px;
+    height: 100%;
+    background-color: #555;
+    max-width: 100%;
+    padding: 20px 31px;
+    color: white;
+}
+
+/* sidebar ui */
+
+aside section {
+    padding: 20px 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, .3);
+}
+
+aside input, aside button {
+    width: 50px;
+    height: 50px;
     border-radius: 4px;
-    padding: 10px;
-    margin: 10px 0;
-    border: 2px solid rgba(255, 255, 255, .5);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 31px;
+    margin-right: 19px;
+}
+
+aside input:checked {
+    background-color: rgba(255, 255, 255, .3);
+}
+
+aside label > * {
+    vertical-align: middle;
+}
+
+aside label {
+    cursor: pointer;
+    display: block;
+    color: rgba(255, 255, 255, .7);
+    
+    transition-property: color;
+}
+
+aside label:hover {
+    color: white;
+}
+
+#recording-toggle {
+    background-image: url(assets/img/ui/record.svg);
+}
+
+#metronome-toggle {
+    background-image: url(assets/img/ui/metronome.svg);
+}
+
+#save {
+    background-image: url(assets/img/ui/save.svg);
+}
+
+#load {
+    background-image: url(assets/img/ui/load.svg);
+}
+
+#reset {
+    background-image: url(assets/img/ui/reset.svg);
 }
