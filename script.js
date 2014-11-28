@@ -2,6 +2,13 @@ var roundToNearest = function(x, n) {
     return Math.round(x / n) * n;
 };
 
+Object.prototype.isOneOf = function(array) {
+    for (var val of array) {
+        if (this == val) return true;
+    }
+    return false;
+};
+
 var beatCountElem = document.querySelector("#beat-count");
 
 var recordingToggle = document.querySelector("#recording-toggle"),
@@ -44,19 +51,22 @@ var main = function(){
     var loopStartTime;
     var beat = 0;
     
+    var keySoundMap = {
+        65: "hihat",
+        68: "tom2",
+        69: "cymbal",
+        83: "snare",
+        87: "tom1",
+        88: "kick"
+    }
+    
     var recordingOn = false,
         metronomeOn = true;
     
     window.onkeydown = function(e){
-        var sound;
-        if (e.which === 83) sound = "snare"; // s
-        if (e.which === 88) sound = "kick"; // x
-        if (e.which === 87) sound = "tom1"; // w
-        if (e.which === 68) sound = "tom2"; // d
-        if (e.which === 65) sound = "hihat"; // a
-        if (e.which === 69) sound = "cymbal"; // e
+        var sound = keySoundMap[e.which];
 
-        if (e.which === 83 || e.which === 88 || e.which === 87 || e.which === 68 || e.which === 65 || e.which === 69) {
+        if (e.which.isOneOf(Object.keys(keySoundMap))) {
             var nowTime = new Date().getTime();
             
             if (recordingOn) {
