@@ -19,17 +19,17 @@ var loopLength = subBeatLenth * beats;
 
 createjs.Sound.alternateExtensions = ["mp3"];
 
-for (var soundStr of ["click", "kick", "snare", "hihat", "tom1", "tom2", "cymbal"]) {
+for (var soundStr of ["kick", "snare", "hihat", "tom1", "tom2", "cymbal", "zargon"]) {
     createjs.Sound.registerSound("assets/sounds/notes/" + soundStr + ".ogg", soundStr);
 }
 
 var main = function(){
     var metronomeSub = function(){
-        if (metronomeOn) playSound("click", 0.1);
+        if (metronomeOn) playSound("zargon", 0.5);
     };
 
     var metronomeBeat = function(){
-        if (metronomeOn) playSound("click", 0.2);
+        if (metronomeOn) playSound("zargon");
         document.body.style.backgroundColor = "rgb(" + new Array(Math.round(Math.random()*255), Math.round(Math.random()*255), Math.round(Math.random()*255)).join(",") + ")";
         
         if (beat !== beats) beat += 1;
