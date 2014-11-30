@@ -18,7 +18,7 @@ var recordingToggle = document.querySelector("#recording-toggle"),
 
 var notes = [];
 
-var beats = 4; // either 3 or 4
+var beats = 4;
 
 var subBeatLenth = 1000;
 
@@ -31,12 +31,18 @@ for (var soundStr of ["kick", "snare", "hihat", "tom1", "tom2", "cymbal", "zargo
 }
 
 var main = function(){
-    var metronomeSub = function(){
-        if (metronomeOn) playSound("zargon", 0.5);
-    };
-
+    var metronomeInterval;
+    var colorInterval;
+    
     var metronomeBeat = function(){
-        if (metronomeOn) playSound("zargon");
+        if (metronomeInterval) clearInterval(metronomeInterval);
+        if (metronomeOn) {
+            playSound("zargon", 0.7);
+            metronomeInterval = setInterval(function(){
+                playSound("zargon", 0.2);
+            }, loopLength / Math.pow(beats, 2));
+        }
+        
         document.body.style.backgroundColor = "rgb(" + new Array(Math.round(Math.random()*255), Math.round(Math.random()*255), Math.round(Math.random()*255)).join(",") + ")";
         
         if (beat !== beats) beat += 1;
@@ -44,9 +50,6 @@ var main = function(){
         
         beatCountElem.textContent = beat.toString();
     };
-    
-    var metronomeInterval;
-    var colorInterval;
     
     var loopStartTime;
     var beat = 0;
@@ -72,7 +75,8 @@ var main = function(){
             if (recordingOn) {
                 notes.push({
                     time: nowTime - loopStartTime,
-                    sound: sound
+                    sound: sound,
+                    queued: false
                 });
             }
 
@@ -81,11 +85,9 @@ var main = function(){
     };
 
     var loop = function(){
-        if (metronomeInterval) clearInterval(metronomeInterval);
         if (colorInterval) clearInterval(colorInterval);
 
-        metronomeSub(); metronomeBeat();
-        metronomeInterval = setInterval(metronomeSub, loopLength / Math.pow(beats, 2));
+        metronomeBeat();
         colorInterval = setInterval(metronomeBeat, loopLength / beats);
 
         playRecordings();
@@ -96,7 +98,7 @@ var main = function(){
     var startLoop = function(){
         loop();
         return setInterval(loop, loopLength);
-    }
+    };
     
     startLoop();
     
@@ -121,15 +123,17 @@ var playSound = function(sound, volume){
     instance.volume = vol;
 };
 
-var queueSound = function(sound, time){
+var queueSound = function(note){
+    note.queued = true;
     setTimeout(function(){
-        playSound(sound);
-    }, time);
+        playSound(note.sound);
+        note.queued = false;
+    }, note.time);
 };
 
 var playRecordings = function(){
     for (var note of notes) {
-        queueSound(note.sound, note.time);
+        if (!note.queued) queueSound(note);
     }
 };
 
