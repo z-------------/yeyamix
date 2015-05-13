@@ -14,6 +14,7 @@ var beatCountElem = document.querySelector("#beat-count");
 var recordingToggle = document.querySelector("#recording-toggle"),
     metronomeToggle = document.querySelector("#metronome-toggle"),
     saveButton = document.querySelector("#save"),
+    loadButton = document.querySelector("#load"),
     resetButton = document.querySelector("#reset");
 
 var notes = [];
@@ -112,6 +113,35 @@ var main = function(){
     
     resetButton.addEventListener("click", function(){
         notes.length = 0;
+    });
+    
+    saveButton.addEventListener("click", function(){
+        var recordings = localStorage.getItem("yeyamix_recordings") ? JSON.parse(localStorage.getItem("yeyamix_recordings")) : [];
+        
+        var recording = {};
+        recording.name = prompt("Enter a name for this recording", "My Gourdy Recording") || "Untitled";
+        
+        recording.notes = notes;
+        recording.notes.forEach(function(note){
+            delete note.queued;
+        });
+        
+        recordings.push(recording);
+        localStorage.setItem("yeyamix_recordings", JSON.stringify(recordings));
+    });
+    
+    loadButton.addEventListener("click", function(){
+        var recordings = localStorage.getItem("yeyamix_recordings") ? JSON.parse(localStorage.getItem("yeyamix_recordings")) : [];
+        var recordingsStr = "";
+        recordings.forEach(function(recording, i){
+            recordingsStr += (i + 1) + ". " + recording.name + "\n";
+        });
+        var chosenIndex = Number(prompt("Which recording do you want to load?\n" + recordingsStr, "1"));
+        if (chosenIndex && recordings[chosenIndex - 1]) {
+            notes = recordings[chosenIndex - 1].notes;
+        } else {
+            alert("Nothing loaded.");
+        }
     });
 };
 
